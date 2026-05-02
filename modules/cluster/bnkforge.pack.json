@@ -2,7 +2,7 @@
   "schema_version": 1,
   "module": {
     "name": "ibm-roks-cluster",
-    "path": "ibm/roks/cluster",
+    "path": "modules/cluster",
     "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
     "category": "infra",
     "description": "Provision or attach IBM ROKS cluster infrastructure for BIG-IP Next deployment.",
@@ -32,45 +32,45 @@
   },
   "inputs": {
     "required": [
-      { "name": "ibmcloud_api_key", "type": "string", "sensitive": true },
-      { "name": "ibmcloud_cluster_region", "type": "string" },
-      { "name": "ibmcloud_resource_group", "type": "string" }
+      { "name": "ibmcloud_api_key", "type": "string", "description": "IBM Cloud API key used to provision or query cluster resources.", "source": "user", "sensitive": true },
+      { "name": "ibmcloud_cluster_region", "type": "string", "description": "IBM Cloud region for cluster resources.", "source": "user" },
+      { "name": "ibmcloud_resource_group", "type": "string", "description": "IBM Cloud resource group for created resources.", "source": "user" }
     ],
     "optional": [
-      { "name": "create_cluster", "type": "bool", "default": true },
-      { "name": "create_transit_gateway", "type": "bool", "default": true },
-      { "name": "create_cos_instance", "type": "bool", "default": true },
-      { "name": "create_client_vpc", "type": "bool", "default": true },
-      { "name": "create_jumphost", "type": "bool", "default": true },
-      { "name": "cluster_vpc_name", "type": "string" },
-      { "name": "openshift_cluster_name", "type": "string" },
-      { "name": "openshift_cluster_version", "type": "string" },
-      { "name": "workers_per_zone", "type": "number" },
-      { "name": "min_worker_vcpu_count", "type": "number" },
-      { "name": "min_worker_memory_gb", "type": "number" },
-      { "name": "cos_instance_name", "type": "string" },
-      { "name": "client_vpc_name", "type": "string" },
-      { "name": "client_vpc_region", "type": "string" },
-      { "name": "client_jumphost_name", "type": "string" },
-      { "name": "ssh_key_name", "type": "string" },
-      { "name": "transit_gateway_name", "type": "string" }
+      { "name": "create_cluster", "type": "bool", "description": "Create a new OpenShift cluster instead of attaching to an existing one.", "source": "user", "default": true },
+      { "name": "create_transit_gateway", "type": "bool", "description": "Create a transit gateway for cross-VPC connectivity.", "source": "user", "default": true },
+      { "name": "create_cos_instance", "type": "bool", "description": "Create IBM Cloud Object Storage for the OpenShift registry.", "source": "user", "default": true },
+      { "name": "create_client_vpc", "type": "bool", "description": "Create a client VPC for test and management access.", "source": "user", "default": true },
+      { "name": "create_jumphost", "type": "bool", "description": "Create a jumphost instance in the client VPC.", "source": "user", "default": true },
+      { "name": "cluster_vpc_name", "type": "string", "description": "Name of the cluster VPC.", "source": "user" },
+      { "name": "openshift_cluster_name", "type": "string", "description": "Name of the OpenShift cluster.", "source": "user" },
+      { "name": "openshift_cluster_version", "type": "string", "description": "Desired OpenShift version.", "source": "user" },
+      { "name": "workers_per_zone", "type": "number", "description": "Worker count per availability zone.", "source": "user" },
+      { "name": "min_worker_vcpu_count", "type": "number", "description": "Minimum worker vCPU count for flavor selection.", "source": "user" },
+      { "name": "min_worker_memory_gb", "type": "number", "description": "Minimum worker memory in GB for flavor selection.", "source": "user" },
+      { "name": "cos_instance_name", "type": "string", "description": "IBM COS instance name for registry storage.", "source": "user" },
+      { "name": "client_vpc_name", "type": "string", "description": "Name of the client VPC.", "source": "user" },
+      { "name": "client_vpc_region", "type": "string", "description": "Region for the client VPC.", "source": "user" },
+      { "name": "client_jumphost_name", "type": "string", "description": "Name of the client jumphost instance.", "source": "user" },
+      { "name": "ssh_key_name", "type": "string", "description": "IBM Cloud SSH key name for jumphost access.", "source": "user" },
+      { "name": "transit_gateway_name", "type": "string", "description": "Name of the transit gateway.", "source": "user" }
     ]
   },
   "outputs": {
     "key_outputs": [
-      { "name": "cluster_id" },
-      { "name": "cluster_name" },
-      { "name": "openshift_cluster_id" },
-      { "name": "openshift_cluster_name" },
-      { "name": "openshift_cluster_crn" },
-      { "name": "cluster_vpc_id" },
-      { "name": "cluster_vpc_name" },
-      { "name": "kubeconfig_file_path" }
+      { "name": "cluster_id", "type": "string", "description": "Cluster ID alias used by downstream modules." },
+      { "name": "cluster_name", "type": "string", "description": "Cluster name alias used by downstream modules." },
+      { "name": "openshift_cluster_id", "type": "string", "description": "OpenShift cluster ID." },
+      { "name": "openshift_cluster_name", "type": "string", "description": "OpenShift cluster name." },
+      { "name": "openshift_cluster_crn", "type": "string", "description": "OpenShift cluster CRN for IAM integration." },
+      { "name": "cluster_vpc_id", "type": "string", "description": "Cluster VPC ID for downstream cloud configuration." },
+      { "name": "cluster_vpc_name", "type": "string", "description": "Cluster VPC name for downstream cloud configuration." },
+      { "name": "kubeconfig_file_path", "type": "string", "description": "Path to the kubeconfig file produced by the cluster module." }
     ]
   },
   "credentials": {
     "required": [
-      { "name": "ibmcloud_api_key", "source": "project_or_template" }
+      { "name": "ibmcloud_api_key", "type": "cloud", "description": "IBM Cloud project or credential-template secret providing the API key." }
     ],
     "optional": []
   }

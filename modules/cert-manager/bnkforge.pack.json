@@ -2,7 +2,7 @@
   "schema_version": 1,
   "module": {
     "name": "ibm-roks-cert-manager",
-    "path": "ibm/roks/cert-manager",
+    "path": "modules/cert-manager",
     "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
     "category": "k8s",
     "description": "Install cert-manager before FLO and BNK custom resources.",
@@ -28,27 +28,27 @@
   },
   "dependencies": {
     "required": [
-      { "module": "ibm/roks/cluster" }
+      { "module": "modules/cluster", "reason": "cert-manager must target a provisioned or attached cluster." }
     ],
     "optional": []
   },
   "inputs": {
     "required": [],
     "optional": [
-      { "name": "enabled", "type": "bool", "default": true },
-      { "name": "namespace", "type": "string", "default": "cert-manager" },
-      { "name": "chart_version", "type": "string", "default": "v1.17.3" },
-      { "name": "chart_repository", "type": "string", "default": "https://charts.jetstack.io" },
-      { "name": "wait_for_deployment", "type": "bool", "default": true },
-      { "name": "timeout", "type": "number", "default": 300 },
-      { "name": "post_deployment_delay", "type": "number", "default": 30 }
+      { "name": "enabled", "type": "bool", "description": "Enable cert-manager deployment.", "source": "user", "default": true },
+      { "name": "namespace", "type": "string", "description": "Namespace where cert-manager will be installed.", "source": "user", "default": "cert-manager" },
+      { "name": "chart_version", "type": "string", "description": "cert-manager Helm chart version.", "source": "user", "default": "v1.17.3" },
+      { "name": "chart_repository", "type": "string", "description": "Helm repository URL for cert-manager.", "source": "user", "default": "https://charts.jetstack.io" },
+      { "name": "wait_for_deployment", "type": "bool", "description": "Wait for cert-manager deployment readiness.", "source": "user", "default": true },
+      { "name": "timeout", "type": "number", "description": "Helm operation timeout in seconds.", "source": "user", "default": 300 },
+      { "name": "post_deployment_delay", "type": "number", "description": "Additional wait time after install for CRD registration.", "source": "user", "default": 30 }
     ]
   },
   "outputs": {
     "key_outputs": [
-      { "name": "namespace" },
-      { "name": "release_name" },
-      { "name": "crd_ready" }
+      { "name": "namespace", "type": "string", "description": "Namespace where cert-manager is deployed." },
+      { "name": "release_name", "type": "string", "description": "Helm release name for cert-manager." },
+      { "name": "crd_ready", "type": "string", "description": "Dependency token indicating cert-manager CRDs are ready." }
     ]
   },
   "credentials": {

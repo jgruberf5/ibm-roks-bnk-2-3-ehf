@@ -2,7 +2,7 @@
   "schema_version": 1,
   "module": {
     "name": "ibm-roks-flo",
-    "path": "ibm/roks/flo",
+    "path": "modules/flo",
     "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
     "category": "bnk",
     "description": "Deploy F5 Lifecycle Operator and related BNK prerequisites on IBM ROKS.",
@@ -28,56 +28,56 @@
   },
   "dependencies": {
     "required": [
-      { "module": "ibm/roks/cert-manager" },
-      { "module": "ibm/roks/cluster" }
+      { "module": "modules/cert-manager", "reason": "FLO creates cert-manager resources and needs cert-manager CRDs present." },
+      { "module": "modules/cluster", "reason": "FLO must target the IBM ROKS cluster created or attached by the cluster module." }
     ],
     "optional": []
   },
   "inputs": {
     "required": [
-      { "name": "f5_bigip_k8s_manifest_version", "type": "string" },
-      { "name": "ibmcloud_api_key", "type": "string", "sensitive": true },
-      { "name": "openshift_cluster_name", "type": "string" },
-      { "name": "openshift_cluster_crn", "type": "string" },
-      { "name": "cluster_vpc_id", "type": "string" }
+      { "name": "f5_bigip_k8s_manifest_version", "type": "string", "description": "F5 BIG-IP Next for Kubernetes manifest version.", "source": "user" },
+      { "name": "ibmcloud_api_key", "type": "string", "description": "IBM Cloud API key used for COS and IAM operations.", "source": "user", "sensitive": true },
+      { "name": "openshift_cluster_name", "type": "string", "description": "OpenShift cluster name used for trusted profile naming and integration.", "source": "user" },
+      { "name": "openshift_cluster_crn", "type": "string", "description": "OpenShift cluster CRN used for IAM trusted profile binding.", "source": "user" },
+      { "name": "cluster_vpc_id", "type": "string", "description": "Cluster VPC ID used for trusted profile IAM scope.", "source": "user" }
     ],
     "optional": [
-      { "name": "enabled", "type": "bool", "default": true },
-      { "name": "cert_manager_crd_ready", "type": "string" },
-      { "name": "far_repo_url", "type": "string", "default": "repo.f5.com" },
-      { "name": "cert_manager_namespace", "type": "string", "default": "cert-manager" },
-      { "name": "manifest_download_dir", "type": "string", "default": "/tmp/f5-manifest" },
-      { "name": "bigip_username", "type": "string", "default": "admin" },
-      { "name": "bigip_password", "type": "string", "sensitive": true },
-      { "name": "bigip_url", "type": "string" },
-      { "name": "flo_namespace", "type": "string", "default": "f5-bnk" },
-      { "name": "utils_namespace", "type": "string", "default": "f5-utils" },
-      { "name": "jwt_token", "type": "string", "sensitive": true },
-      { "name": "cluster_issuer_name", "type": "string", "default": "sample-issuer" },
-      { "name": "nad_cni_type", "type": "string", "default": "ipvlan" },
-      { "name": "nad_interface_name", "type": "string", "default": "ens3" },
-      { "name": "nad_ipvlan_mode", "type": "string", "default": "l2" },
-      { "name": "nad_ipvlan_address", "type": "string", "default": "10.10.1.1/24" },
-      { "name": "use_cos_bucket", "type": "bool", "default": true },
-      { "name": "ibmcloud_cos_bucket_region", "type": "string", "default": "us-south" },
-      { "name": "ibmcloud_resource_group", "type": "string", "default": "default" },
-      { "name": "ibmcloud_cos_instance_name", "type": "string", "default": "bnk-orchestration" },
-      { "name": "ibmcloud_resources_cos_bucket", "type": "string", "default": "bnk-schematics-resources" },
-      { "name": "f5_cne_far_auth_file", "type": "string", "default": "f5-far-auth-key.tgz" },
-      { "name": "f5_cne_subscription_jwt_file", "type": "string", "default": "trial.jwt" }
+      { "name": "enabled", "type": "bool", "description": "Enable FLO deployment.", "source": "user", "default": true },
+      { "name": "cert_manager_crd_ready", "type": "string", "description": "Dependency token proving cert-manager CRDs are ready.", "source": "user" },
+      { "name": "far_repo_url", "type": "string", "description": "F5 Artifact Repository hostname.", "source": "user", "default": "repo.f5.com" },
+      { "name": "cert_manager_namespace", "type": "string", "description": "Namespace where cert-manager is installed.", "source": "user", "default": "cert-manager" },
+      { "name": "manifest_download_dir", "type": "string", "description": "Temporary directory for F5 manifest extraction.", "source": "user", "default": "/tmp/f5-manifest" },
+      { "name": "bigip_username", "type": "string", "description": "BIG-IP username for CIS integration.", "source": "user", "default": "admin" },
+      { "name": "bigip_password", "type": "string", "description": "BIG-IP password for CIS integration.", "source": "user", "sensitive": true },
+      { "name": "bigip_url", "type": "string", "description": "BIG-IP URL for CIS integration.", "source": "user" },
+      { "name": "flo_namespace", "type": "string", "description": "Namespace where FLO will be installed.", "source": "user", "default": "f5-bnk" },
+      { "name": "utils_namespace", "type": "string", "description": "Namespace for shared F5 utility components.", "source": "user", "default": "f5-utils" },
+      { "name": "jwt_token", "type": "string", "description": "JWT token used when COS-backed license retrieval is disabled.", "source": "user", "sensitive": true },
+      { "name": "cluster_issuer_name", "type": "string", "description": "Cluster issuer name created or referenced by FLO.", "source": "user", "default": "sample-issuer" },
+      { "name": "nad_cni_type", "type": "string", "description": "CNI type used for the network attachment definition.", "source": "user", "default": "ipvlan" },
+      { "name": "nad_interface_name", "type": "string", "description": "Host interface name for the network attachment definition.", "source": "user", "default": "ens3" },
+      { "name": "nad_ipvlan_mode", "type": "string", "description": "IPVLAN mode for the network attachment definition.", "source": "user", "default": "l2" },
+      { "name": "nad_ipvlan_address", "type": "string", "description": "Static address used for the IPVLAN network attachment definition.", "source": "user", "default": "10.10.1.1/24" },
+      { "name": "use_cos_bucket", "type": "bool", "description": "Fetch FAR auth and JWT artifacts from IBM COS.", "source": "user", "default": true },
+      { "name": "ibmcloud_cos_bucket_region", "type": "string", "description": "IBM COS bucket region for FAR and JWT artifacts.", "source": "user", "default": "us-south" },
+      { "name": "ibmcloud_resource_group", "type": "string", "description": "IBM Cloud resource group used for COS lookup.", "source": "user", "default": "default" },
+      { "name": "ibmcloud_cos_instance_name", "type": "string", "description": "IBM COS instance name used for artifact retrieval.", "source": "user", "default": "bnk-orchestration" },
+      { "name": "ibmcloud_resources_cos_bucket", "type": "string", "description": "IBM COS bucket containing FAR auth and JWT artifacts.", "source": "user", "default": "bnk-schematics-resources" },
+      { "name": "f5_cne_far_auth_file", "type": "string", "description": "FAR auth archive filename stored in IBM COS.", "source": "user", "default": "f5-far-auth-key.tgz" },
+      { "name": "f5_cne_subscription_jwt_file", "type": "string", "description": "Subscription JWT filename stored in IBM COS.", "source": "user", "default": "trial.jwt" }
     ]
   },
   "outputs": {
     "key_outputs": [
-      { "name": "trusted_profile_id" },
-      { "name": "cluster_issuer_name" },
-      { "name": "cneinstance_network_attachments" },
-      { "name": "cos_jwt_token" }
+      { "name": "trusted_profile_id", "type": "string", "description": "IBM IAM trusted profile ID created for the CNE controller." },
+      { "name": "cluster_issuer_name", "type": "string", "description": "Cluster issuer name exposed to downstream modules." },
+      { "name": "cneinstance_network_attachments", "type": "list", "description": "Network attachment definitions passed to the CNEInstance module." },
+      { "name": "cos_jwt_token", "type": "string", "description": "JWT token fetched from IBM COS when COS integration is enabled." }
     ]
   },
   "credentials": {
     "required": [
-      { "name": "ibmcloud_api_key", "source": "project_or_template" }
+      { "name": "ibmcloud_api_key", "type": "cloud", "description": "IBM Cloud project or credential-template secret providing the API key." }
     ],
     "optional": []
   }

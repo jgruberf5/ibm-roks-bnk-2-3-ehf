@@ -2,7 +2,7 @@
   "schema_version": 1,
   "module": {
     "name": "ibm-roks-license",
-    "path": "ibm/roks/license",
+    "path": "modules/license",
     "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
     "category": "bnk",
     "description": "Deploy the BIG-IP Next license custom resource after CNEInstance is ready.",
@@ -28,25 +28,25 @@
   },
   "dependencies": {
     "required": [
-      { "module": "ibm/roks/cneinstance" }
+      { "module": "modules/cneinstance", "reason": "The license resource depends on CNEInstance CRDs and runtime components." }
     ],
     "optional": []
   },
   "inputs": {
     "required": [
-      { "name": "jwt_token", "type": "string", "sensitive": true }
+      { "name": "jwt_token", "type": "string", "description": "JWT token used to register the BIG-IP Next license.", "source": "user", "sensitive": true }
     ],
     "optional": [
-      { "name": "enabled", "type": "bool", "default": true },
-      { "name": "utils_namespace", "type": "string", "default": "f5-utils" },
-      { "name": "license_mode", "type": "string", "default": "connected" },
-      { "name": "cneinstance_dependency", "type": "map" }
+      { "name": "enabled", "type": "bool", "description": "Enable license deployment.", "source": "user", "default": true },
+      { "name": "utils_namespace", "type": "string", "description": "Namespace where the license custom resource is created.", "source": "user", "default": "f5-utils" },
+      { "name": "license_mode", "type": "string", "description": "License operation mode.", "source": "user", "default": "connected" },
+      { "name": "cneinstance_dependency", "type": "map", "description": "Optional explicit CNEInstance dependency object used by the upstream module.", "source": "user" }
     ]
   },
   "outputs": {
     "key_outputs": [
-      { "name": "namespace" },
-      { "name": "license_name" }
+      { "name": "namespace", "type": "string", "description": "Namespace where the license resource is deployed." },
+      { "name": "license_name", "type": "string", "description": "Name of the deployed license custom resource." }
     ]
   },
   "credentials": {

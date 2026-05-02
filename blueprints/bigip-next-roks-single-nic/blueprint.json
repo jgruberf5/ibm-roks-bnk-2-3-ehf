@@ -12,7 +12,7 @@
   "modules": [
     {
       "key": "cluster",
-      "module_path": "ibm/roks/cluster",
+      "module_path": "modules/cluster",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "required": true,
       "path_in_project": "ibm-roks/cluster",
@@ -21,7 +21,7 @@
     },
     {
       "key": "cert_manager",
-      "module_path": "ibm/roks/cert-manager",
+      "module_path": "modules/cert-manager",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "required": true,
       "path_in_project": "ibm-roks/cert-manager",
@@ -34,7 +34,7 @@
     },
     {
       "key": "flo",
-      "module_path": "ibm/roks/flo",
+      "module_path": "modules/flo",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "required": true,
       "path_in_project": "ibm-roks/flo",
@@ -78,7 +78,7 @@
     },
     {
       "key": "cneinstance",
-      "module_path": "ibm/roks/cneinstance",
+      "module_path": "modules/cneinstance",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "required": true,
       "path_in_project": "ibm-roks/cneinstance",
@@ -125,7 +125,7 @@
     },
     {
       "key": "license",
-      "module_path": "ibm/roks/license",
+      "module_path": "modules/license",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "required": true,
       "path_in_project": "ibm-roks/license",
