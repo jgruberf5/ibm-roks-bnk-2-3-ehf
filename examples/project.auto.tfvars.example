@@ -1,0 +1,42 @@
+ibmcloud_api_key              = "YOUR_IBM_CLOUD_API_KEY"
+ibmcloud_cluster_region       = "jp-tok"
+ibmcloud_resource_group       = "default"
+
+create_cluster                = true
+create_transit_gateway        = true
+create_cos_instance           = true
+create_client_vpc             = true
+create_jumphost               = true
+
+cluster_vpc_name              = "tf-cluster-vpc"
+openshift_cluster_name        = "tf-openshift-cluster"
+openshift_cluster_version     = "4.18"
+workers_per_zone              = 1
+min_worker_vcpu_count         = 16
+min_worker_memory_gb          = 64
+client_vpc_name               = "tf-client-vpc"
+client_vpc_region             = "eu-gb"
+client_jumphost_name          = "tf-client-jumphost"
+ssh_key_name                  = "test-jh"
+transit_gateway_name          = "tf-tgw"
+cos_instance_name             = "tf-cos-instance"
+
+f5_bigip_k8s_manifest_version = "2.3.0-bnpp-ehf-2-3.2598.3-0.0.17"
+far_repo_url                  = "repo.f5.com"
+use_cos_bucket                = true
+ibmcloud_cos_bucket_region    = "us-south"
+ibmcloud_cos_instance_name    = "bnk-orchestration"
+ibmcloud_resources_cos_bucket = "bnk-schematics-resources"
+f5_cne_far_auth_file          = "f5-far-auth-key.tgz"
+f5_cne_subscription_jwt_file  = "trial.jwt"
+
+bigip_username                = "admin"
+bigip_password                = "YOUR_BIGIP_PASSWORD"
+bigip_url                     = "https://YOUR_BIGIP_URL"
+
+cert_manager_namespace        = "cert-manager"
+chart_version                 = "v1.17.3"
+flo_namespace                 = "f5-bnk"
+utils_namespace               = "f5-utils"
+license_mode                  = "connected"
+cneinstance_deployment_size   = "Small"

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "module": {
+    "name": "ibm-roks-cluster",
+    "path": "ibm/roks/cluster",
+    "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+    "category": "infra",
+    "description": "Provision or attach IBM ROKS cluster infrastructure for BIG-IP Next deployment.",
+    "provider": "ibm",
+    "supported_platforms": ["ibm"],
+    "tags": ["ibm", "roks", "openshift", "bigip-next"]
+  },
+  "deployment_pack": {
+    "engine": "opentofu",
+    "runner_profile": "opentofu-default",
+    "working_directory": ".",
+    "entrypoints": {
+      "module_root": "."
+    },
+    "lifecycle": {
+      "supports_init": true,
+      "supports_plan": true,
+      "supports_apply": true,
+      "supports_destroy": true,
+      "supports_refresh": true,
+      "supports_drift": true
+    }
+  },
+  "dependencies": {
+    "required": [],
+    "optional": []
+  },
+  "inputs": {
+    "required": [
+      { "name": "ibmcloud_api_key", "type": "string", "sensitive": true },
+      { "name": "ibmcloud_cluster_region", "type": "string" },
+      { "name": "ibmcloud_resource_group", "type": "string" }
+    ],
+    "optional": [
+      { "name": "create_cluster", "type": "bool", "default": true },
+      { "name": "create_transit_gateway", "type": "bool", "default": true },
+      { "name": "create_cos_instance", "type": "bool", "default": true },
+      { "name": "create_client_vpc", "type": "bool", "default": true },
+      { "name": "create_jumphost", "type": "bool", "default": true },
+      { "name": "cluster_vpc_name", "type": "string" },
+      { "name": "openshift_cluster_name", "type": "string" },
+      { "name": "openshift_cluster_version", "type": "string" },
+      { "name": "workers_per_zone", "type": "number" },
+      { "name": "min_worker_vcpu_count", "type": "number" },
+      { "name": "min_worker_memory_gb", "type": "number" },
+      { "name": "cos_instance_name", "type": "string" },
+      { "name": "client_vpc_name", "type": "string" },
+      { "name": "client_vpc_region", "type": "string" },
+      { "name": "client_jumphost_name", "type": "string" },
+      { "name": "ssh_key_name", "type": "string" },
+      { "name": "transit_gateway_name", "type": "string" }
+    ]
+  },
+  "outputs": {
+    "key_outputs": [
+      { "name": "cluster_id" },
+      { "name": "cluster_name" },
+      { "name": "openshift_cluster_id" },
+      { "name": "openshift_cluster_name" },
+      { "name": "openshift_cluster_crn" },
+      { "name": "cluster_vpc_id" },
+      { "name": "cluster_vpc_name" },
+      { "name": "kubeconfig_file_path" }
+    ]
+  },
+  "credentials": {
+    "required": [
+      { "name": "ibmcloud_api_key", "source": "project_or_template" }
+    ],
+    "optional": []
+  }
+}

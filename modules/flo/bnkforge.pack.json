@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "module": {
+    "name": "ibm-roks-flo",
+    "path": "ibm/roks/flo",
+    "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+    "category": "bnk",
+    "description": "Deploy F5 Lifecycle Operator and related BNK prerequisites on IBM ROKS.",
+    "provider": "ibm",
+    "supported_platforms": ["ibm"],
+    "tags": ["ibm", "roks", "bnk", "flo", "f5"]
+  },
+  "deployment_pack": {
+    "engine": "opentofu",
+    "runner_profile": "opentofu-default",
+    "working_directory": ".",
+    "entrypoints": {
+      "module_root": "."
+    },
+    "lifecycle": {
+      "supports_init": true,
+      "supports_plan": true,
+      "supports_apply": true,
+      "supports_destroy": true,
+      "supports_refresh": true,
+      "supports_drift": true
+    }
+  },
+  "dependencies": {
+    "required": [
+      { "module": "ibm/roks/cert-manager" },
+      { "module": "ibm/roks/cluster" }
+    ],
+    "optional": []
+  },
+  "inputs": {
+    "required": [
+      { "name": "f5_bigip_k8s_manifest_version", "type": "string" },
+      { "name": "ibmcloud_api_key", "type": "string", "sensitive": true },
+      { "name": "openshift_cluster_name", "type": "string" },
+      { "name": "openshift_cluster_crn", "type": "string" },
+      { "name": "cluster_vpc_id", "type": "string" }
+    ],
+    "optional": [
+      { "name": "enabled", "type": "bool", "default": true },
+      { "name": "cert_manager_crd_ready", "type": "string" },
+      { "name": "far_repo_url", "type": "string", "default": "repo.f5.com" },
+      { "name": "cert_manager_namespace", "type": "string", "default": "cert-manager" },
+      { "name": "manifest_download_dir", "type": "string", "default": "/tmp/f5-manifest" },
+      { "name": "bigip_username", "type": "string", "default": "admin" },
+      { "name": "bigip_password", "type": "string", "sensitive": true },
+      { "name": "bigip_url", "type": "string" },
+      { "name": "flo_namespace", "type": "string", "default": "f5-bnk" },
+      { "name": "utils_namespace", "type": "string", "default": "f5-utils" },
+      { "name": "jwt_token", "type": "string", "sensitive": true },
+      { "name": "cluster_issuer_name", "type": "string", "default": "sample-issuer" },
+      { "name": "nad_cni_type", "type": "string", "default": "ipvlan" },
+      { "name": "nad_interface_name", "type": "string", "default": "ens3" },
+      { "name": "nad_ipvlan_mode", "type": "string", "default": "l2" },
+      { "name": "nad_ipvlan_address", "type": "string", "default": "10.10.1.1/24" },
+      { "name": "use_cos_bucket", "type": "bool", "default": true },
+      { "name": "ibmcloud_cos_bucket_region", "type": "string", "default": "us-south" },
+      { "name": "ibmcloud_resource_group", "type": "string", "default": "default" },
+      { "name": "ibmcloud_cos_instance_name", "type": "string", "default": "bnk-orchestration" },
+      { "name": "ibmcloud_resources_cos_bucket", "type": "string", "default": "bnk-schematics-resources" },
+      { "name": "f5_cne_far_auth_file", "type": "string", "default": "f5-far-auth-key.tgz" },
+      { "name": "f5_cne_subscription_jwt_file", "type": "string", "default": "trial.jwt" }
+    ]
+  },
+  "outputs": {
+    "key_outputs": [
+      { "name": "trusted_profile_id" },
+      { "name": "cluster_issuer_name" },
+      { "name": "cneinstance_network_attachments" },
+      { "name": "cos_jwt_token" }
+    ]
+  },
+  "credentials": {
+    "required": [
+      { "name": "ibmcloud_api_key", "source": "project_or_template" }
+    ],
+    "optional": []
+  }
+}

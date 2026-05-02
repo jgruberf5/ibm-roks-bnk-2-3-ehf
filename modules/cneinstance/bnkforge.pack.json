@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "module": {
+    "name": "ibm-roks-cneinstance",
+    "path": "ibm/roks/cneinstance",
+    "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+    "category": "bnk",
+    "description": "Deploy the BIG-IP Next CNEInstance custom resource after FLO is ready.",
+    "provider": "ibm",
+    "supported_platforms": ["ibm"],
+    "tags": ["ibm", "roks", "bnk", "cneinstance", "f5"]
+  },
+  "deployment_pack": {
+    "engine": "opentofu",
+    "runner_profile": "opentofu-default",
+    "working_directory": ".",
+    "entrypoints": {
+      "module_root": "."
+    },
+    "lifecycle": {
+      "supports_init": true,
+      "supports_plan": true,
+      "supports_apply": true,
+      "supports_destroy": true,
+      "supports_refresh": true,
+      "supports_drift": true
+    }
+  },
+  "dependencies": {
+    "required": [
+      { "module": "ibm/roks/flo" }
+    ],
+    "optional": []
+  },
+  "inputs": {
+    "required": [
+      { "name": "f5_bigip_k8s_manifest_version", "type": "string" },
+      { "name": "cluster_issuer_name", "type": "string" },
+      { "name": "cneinstance_ibm_trusted_profile_id", "type": "string" },
+      { "name": "cneinstance_network_attachments", "type": "list" }
+    ],
+    "optional": [
+      { "name": "enabled", "type": "bool", "default": true },
+      { "name": "flo_namespace", "type": "string", "default": "f5-bnk" },
+      { "name": "utils_namespace", "type": "string", "default": "f5-utils" },
+      { "name": "cneinstance_spec", "type": "map" },
+      { "name": "cneinstance_gateway_api", "type": "bool", "default": true },
+      { "name": "cneinstance_whole_cluster", "type": "bool", "default": true },
+      { "name": "cneinstance_logging_subsystem", "type": "bool", "default": true },
+      { "name": "cneinstance_metric_subsystem", "type": "bool", "default": true },
+      { "name": "cneinstance_deployment_size", "type": "string", "default": "Small" },
+      { "name": "far_repo_url", "type": "string", "default": "repo.f5.com" },
+      { "name": "cneinstance_dynamic_routing", "type": "bool", "default": false },
+      { "name": "cneinstance_firewall_acl", "type": "bool", "default": true },
+      { "name": "cneinstance_pseudocni", "type": "bool", "default": true },
+      { "name": "cneinstance_env_discovery", "type": "bool", "default": false },
+      { "name": "cneinstance_cloud_env", "type": "bool", "default": true },
+      { "name": "cneinstance_cloud_provider", "type": "string", "default": "ibm" },
+      { "name": "cneinstance_vpc_name", "type": "string" },
+      { "name": "cneinstance_cloud_region", "type": "string" },
+      { "name": "cneinstance_gslb_datacenter_name", "type": "string" },
+      { "name": "flo_deployment_id", "type": "string" },
+      { "name": "flo_deployment_dependency", "type": "map" }
+    ]
+  },
+  "outputs": {
+    "key_outputs": [
+      { "name": "deployment_name" },
+      { "name": "namespace" },
+      { "name": "cneinstance_name" }
+    ]
+  },
+  "credentials": {
+    "required": [],
+    "optional": []
+  }
+}

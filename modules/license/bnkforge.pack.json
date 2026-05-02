@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "module": {
+    "name": "ibm-roks-license",
+    "path": "ibm/roks/license",
+    "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+    "category": "bnk",
+    "description": "Deploy the BIG-IP Next license custom resource after CNEInstance is ready.",
+    "provider": "ibm",
+    "supported_platforms": ["ibm"],
+    "tags": ["ibm", "roks", "bnk", "license", "f5"]
+  },
+  "deployment_pack": {
+    "engine": "opentofu",
+    "runner_profile": "opentofu-default",
+    "working_directory": ".",
+    "entrypoints": {
+      "module_root": "."
+    },
+    "lifecycle": {
+      "supports_init": true,
+      "supports_plan": true,
+      "supports_apply": true,
+      "supports_destroy": true,
+      "supports_refresh": true,
+      "supports_drift": true
+    }
+  },
+  "dependencies": {
+    "required": [
+      { "module": "ibm/roks/cneinstance" }
+    ],
+    "optional": []
+  },
+  "inputs": {
+    "required": [
+      { "name": "jwt_token", "type": "string", "sensitive": true }
+    ],
+    "optional": [
+      { "name": "enabled", "type": "bool", "default": true },
+      { "name": "utils_namespace", "type": "string", "default": "f5-utils" },
+      { "name": "license_mode", "type": "string", "default": "connected" },
+      { "name": "cneinstance_dependency", "type": "map" }
+    ]
+  },
+  "outputs": {
+    "key_outputs": [
+      { "name": "namespace" },
+      { "name": "license_name" }
+    ]
+  },
+  "credentials": {
+    "required": [],
+    "optional": []
+  }
+}
