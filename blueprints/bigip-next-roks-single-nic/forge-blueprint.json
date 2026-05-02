@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "blueprint": {
+    "id": "ibm-roks-bnk-2-3-ehf.single-nic",
+    "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+    "name": "BIG-IP Next for Kubernetes on IBM ROKS Single NIC",
+    "description": "Composable IBM ROKS BNK deployment that sequences cluster, cert-manager, FLO, CNEInstance, and license modules."
+  },
+  "compatibility": {
+    "supported_platform_profiles": [
+      "ibm_roks"
+    ],
+    "required_capabilities": []
+  },
+  "inputs": {
+    "required": [
+      {
+        "name": "ibmcloud_api_key",
+        "type": "string",
+        "description": "IBM Cloud API key for cluster, COS, and IAM operations."
+      },
+      {
+        "name": "ibmcloud_cluster_region",
+        "type": "string",
+        "description": "IBM Cloud region for the OpenShift cluster."
+      },
+      {
+        "name": "ibmcloud_resource_group",
+        "type": "string",
+        "description": "IBM Cloud resource group used by the deployment."
+      },
+      {
+        "name": "f5_bigip_k8s_manifest_version",
+        "type": "string",
+        "description": "Pinned F5 BIG-IP Next for Kubernetes manifest version."
+      },
+      {
+        "name": "jwt_token",
+        "type": "string",
+        "description": "JWT token used by the license module when not relying on COS-provided token output."
+      }
+    ],
+    "optional": [
+      {
+        "name": "create_cluster",
+        "type": "bool",
+        "description": "Create a new OpenShift cluster instead of attaching to an existing one.",
+        "default": true
+      },
+      {
+        "name": "create_transit_gateway",
+        "type": "bool",
+        "description": "Create the transit gateway.",
+        "default": true
+      },
+      {
+        "name": "create_cos_instance",
+        "type": "bool",
+        "description": "Create IBM COS for registry and artifact access.",
+        "default": true
+      },
+      {
+        "name": "create_client_vpc",
+        "type": "bool",
+        "description": "Create the client VPC.",
+        "default": true
+      },
+      {
+        "name": "create_jumphost",
+        "type": "bool",
+        "description": "Create the jumphost instance.",
+        "default": true
+      },
+      {
+        "name": "cluster_vpc_name",
+        "type": "string",
+        "description": "Cluster VPC name.",
+        "default": "tf-cluster-vpc"
+      },
+      {
+        "name": "openshift_cluster_name",
+        "type": "string",
+        "description": "OpenShift cluster name.",
+        "default": "tf-openshift-cluster"
+      },
+      {
+        "name": "openshift_cluster_version",
+        "type": "string",
+        "description": "OpenShift version.",
+        "default": "4.18"
+      },
+      {
+        "name": "workers_per_zone",
+        "type": "number",
+        "description": "Number of workers per zone.",
+        "default": 1
+      },
+      {
+        "name": "min_worker_vcpu_count",
+        "type": "number",
+        "description": "Minimum worker vCPU count.",
+        "default": 16
+      },
+      {
+        "name": "min_worker_memory_gb",
+        "type": "number",
+        "description": "Minimum worker memory in GB.",
+        "default": 64
+      },
+      {
+        "name": "cos_instance_name",
+        "type": "string",
+        "description": "IBM COS instance name.",
+        "default": "tf-cos-instance"
+      },
+      {
+        "name": "client_vpc_name",
+        "type": "string",
+        "description": "Client VPC name.",
+        "default": "tf-client-vpc"
+      },
+      {
+        "name": "client_vpc_region",
+        "type": "string",
+        "description": "Client VPC region.",
+        "default": "eu-gb"
+      },
+      {
+        "name": "client_jumphost_name",
+        "type": "string",
+        "description": "Client jumphost name.",
+        "default": "tf-client-jumphost"
+      },
+      {
+        "name": "ssh_key_name",
+        "type": "string",
+        "description": "IBM Cloud SSH key name for jumphost access.",
+        "default": ""
+      },
+      {
+        "name": "transit_gateway_name",
+        "type": "string",
+        "description": "Transit gateway name.",
+        "default": "tf-tgw"
+      },
+      {
+        "name": "cert_manager_namespace",
+        "type": "string",
+        "description": "Namespace for cert-manager.",
+        "default": "cert-manager"
+      },
+      {
+        "name": "chart_version",
+        "type": "string",
+        "description": "cert-manager chart version.",
+        "default": "v1.17.3"
+      },
+      {
+        "name": "chart_repository",
+        "type": "string",
+        "description": "cert-manager chart repository URL.",
+        "default": "https://charts.jetstack.io"
+      },
+      {
+        "name": "wait_for_deployment",
+        "type": "bool",
+        "description": "Wait for cert-manager deployment.",
+        "default": true
+      },
+      {
+        "name": "timeout",
+        "type": "number",
+        "description": "Helm timeout in seconds.",
+        "default": 300
+      },
+      {
+        "name": "post_deployment_delay",
+        "type": "number",
+        "description": "Post-deployment delay in seconds for cert-manager CRDs.",
+        "default": 30
+      },
+      {
+        "name": "far_repo_url",
+        "type": "string",
+        "description": "F5 artifact repository hostname.",
+        "default": "repo.f5.com"
+      },
+      {
+        "name": "manifest_download_dir",
+        "type": "string",
+        "description": "Temporary directory for manifest download and extraction.",
+        "default": "/tmp/f5-manifest"
+      },
+      {
+        "name": "bigip_username",
+        "type": "string",
+        "description": "BIG-IP username.",
+        "default": "admin"
+      },
+      {
+        "name": "bigip_password",
+        "type": "string",
+        "description": "BIG-IP password."
+      },
+      {
+        "name": "bigip_url",
+        "type": "string",
+        "description": "BIG-IP URL."
+      },
+      {
+        "name": "flo_namespace",
+        "type": "string",
+        "description": "FLO namespace.",
+        "default": "f5-bnk"
+      },
+      {
+        "name": "utils_namespace",
+        "type": "string",
+        "description": "Utilities namespace.",
+        "default": "f5-utils"
+      },
+      {
+        "name": "cluster_issuer_name",
+        "type": "string",
+        "description": "Cluster issuer name.",
+        "default": "sample-issuer"
+      },
+      {
+        "name": "nad_cni_type",
+        "type": "string",
+        "description": "Network attachment CNI type.",
+        "default": "ipvlan"
+      },
+      {
+        "name": "nad_interface_name",
+        "type": "string",
+        "description": "Network attachment host interface name.",
+        "default": "ens3"
+      },
+      {
+        "name": "nad_ipvlan_mode",
+        "type": "string",
+        "description": "Network attachment IPVLAN mode.",
+        "default": "l2"
+      },
+      {
+        "name": "nad_ipvlan_address",
+        "type": "string",
+        "description": "Network attachment IPVLAN address.",
+        "default": "10.10.1.1/24"
+      },
+      {
+        "name": "use_cos_bucket",
+        "type": "bool",
+        "description": "Use IBM COS for FAR auth and JWT artifacts.",
+        "default": true
+      },
+      {
+        "name": "ibmcloud_cos_bucket_region",
+        "type": "string",
+        "description": "IBM COS bucket region.",
+        "default": "us-south"
+      },
+      {
+        "name": "ibmcloud_cos_instance_name",
+        "type": "string",
+        "description": "IBM COS instance name for FLO artifact retrieval.",
+        "default": "bnk-orchestration"
+      },
+      {
+        "name": "ibmcloud_resources_cos_bucket",
+        "type": "string",
+        "description": "IBM COS bucket containing deployment artifacts.",
+        "default": "bnk-schematics-resources"
+      },
+      {
+        "name": "f5_cne_far_auth_file",
+        "type": "string",
+        "description": "FAR auth archive filename in COS.",
+        "default": "f5-far-auth-key.tgz"
+      },
+      {
+        "name": "f5_cne_subscription_jwt_file",
+        "type": "string",
+        "description": "Subscription JWT filename in COS.",
+        "default": "trial.jwt"
+      },
+      {
+        "name": "cneinstance_gateway_api",
+        "type": "bool",
+        "description": "Enable Gateway API in CNEInstance.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_whole_cluster",
+        "type": "bool",
+        "description": "Deploy CNEInstance cluster-wide.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_logging_subsystem",
+        "type": "bool",
+        "description": "Enable logging subsystem.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_metric_subsystem",
+        "type": "bool",
+        "description": "Enable metrics subsystem.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_deployment_size",
+        "type": "string",
+        "description": "CNEInstance deployment size.",
+        "default": "Small"
+      },
+      {
+        "name": "cneinstance_dynamic_routing",
+        "type": "bool",
+        "description": "Enable dynamic routing.",
+        "default": false
+      },
+      {
+        "name": "cneinstance_firewall_acl",
+        "type": "bool",
+        "description": "Enable firewall ACL.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_pseudocni",
+        "type": "bool",
+        "description": "Enable pseudo-CNI mode.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_env_discovery",
+        "type": "bool",
+        "description": "Enable environment discovery.",
+        "default": false
+      },
+      {
+        "name": "cneinstance_cloud_env",
+        "type": "bool",
+        "description": "Enable cloud environment support.",
+        "default": true
+      },
+      {
+        "name": "cneinstance_cloud_provider",
+        "type": "string",
+        "description": "Cloud provider for CNEInstance.",
+        "default": "ibm"
+      },
+      {
+        "name": "cneinstance_cloud_region",
+        "type": "string",
+        "description": "Cloud region for CNEInstance settings."
+      },
+      {
+        "name": "cneinstance_gslb_datacenter_name",
+        "type": "string",
+        "description": "Optional GSLB datacenter name."
+      },
+      {
+        "name": "license_mode",
+        "type": "string",
+        "description": "License mode for the License CR.",
+        "default": "connected"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "id": "cluster",
+      "module": "modules/cluster",
+      "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+      "depends_on": [],
+      "inputs": {
+        "ibmcloud_api_key": "${ibmcloud_api_key}",
+        "ibmcloud_cluster_region": "${ibmcloud_cluster_region}",
+        "ibmcloud_resource_group": "${ibmcloud_resource_group}",
+        "create_cluster": "${create_cluster}",
+        "create_transit_gateway": "${create_transit_gateway}",
+        "create_cos_instance": "${create_cos_instance}",
+        "create_client_vpc": "${create_client_vpc}",
+        "create_jumphost": "${create_jumphost}",
+        "cluster_vpc_name": "${cluster_vpc_name}",
+        "openshift_cluster_name": "${openshift_cluster_name}",
+        "openshift_cluster_version": "${openshift_cluster_version}",
+        "workers_per_zone": "${workers_per_zone}",
+        "min_worker_vcpu_count": "${min_worker_vcpu_count}",
+        "min_worker_memory_gb": "${min_worker_memory_gb}",
+        "cos_instance_name": "${cos_instance_name}",
+        "client_vpc_name": "${client_vpc_name}",
+        "client_vpc_region": "${client_vpc_region}",
+        "client_jumphost_name": "${client_jumphost_name}",
+        "ssh_key_name": "${ssh_key_name}",
+        "transit_gateway_name": "${transit_gateway_name}"
+      }
+    },
+    {
+      "id": "cert-manager",
+      "module": "modules/cert-manager",
+      "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+      "depends_on": [
+        "cluster"
+      ],
+      "inputs": {
+        "enabled": true,
+        "namespace": "${cert_manager_namespace}",
+        "chart_version": "${chart_version}",
+        "chart_repository": "${chart_repository}",
+        "wait_for_deployment": "${wait_for_deployment}",
+        "timeout": "${timeout}",
+        "post_deployment_delay": "${post_deployment_delay}"
+      }
+    },
+    {
+      "id": "flo",
+      "module": "modules/flo",
+      "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+      "depends_on": [
+        "cluster",
+        "cert-manager"
+      ],
+      "inputs": {
+        "enabled": true,
+        "ibmcloud_api_key": "${ibmcloud_api_key}",
+        "f5_bigip_k8s_manifest_version": "${f5_bigip_k8s_manifest_version}",
+        "openshift_cluster_name": "${openshift_cluster_name}",
+        "openshift_cluster_crn": "${openshift_cluster_name}",
+        "cluster_vpc_id": "${cluster_vpc_name}",
+        "cert_manager_crd_ready": "ready",
+        "far_repo_url": "${far_repo_url}",
+        "cert_manager_namespace": "${cert_manager_namespace}",
+        "manifest_download_dir": "${manifest_download_dir}",
+        "bigip_username": "${bigip_username}",
+        "bigip_password": "${bigip_password}",
+        "bigip_url": "${bigip_url}",
+        "flo_namespace": "${flo_namespace}",
+        "utils_namespace": "${utils_namespace}",
+        "jwt_token": "${jwt_token}",
+        "cluster_issuer_name": "${cluster_issuer_name}",
+        "nad_cni_type": "${nad_cni_type}",
+        "nad_interface_name": "${nad_interface_name}",
+        "nad_ipvlan_mode": "${nad_ipvlan_mode}",
+        "nad_ipvlan_address": "${nad_ipvlan_address}",
+        "use_cos_bucket": "${use_cos_bucket}",
+        "ibmcloud_cos_bucket_region": "${ibmcloud_cos_bucket_region}",
+        "ibmcloud_resource_group": "${ibmcloud_resource_group}",
+        "ibmcloud_cos_instance_name": "${ibmcloud_cos_instance_name}",
+        "ibmcloud_resources_cos_bucket": "${ibmcloud_resources_cos_bucket}",
+        "f5_cne_far_auth_file": "${f5_cne_far_auth_file}",
+        "f5_cne_subscription_jwt_file": "${f5_cne_subscription_jwt_file}"
+      }
+    },
+    {
+      "id": "cneinstance",
+      "module": "modules/cneinstance",
+      "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+      "depends_on": [
+        "flo"
+      ],
+      "inputs": {
+        "enabled": true,
+        "flo_namespace": "${flo_namespace}",
+        "utils_namespace": "${utils_namespace}",
+        "f5_bigip_k8s_manifest_version": "${f5_bigip_k8s_manifest_version}",
+        "cluster_issuer_name": "${cluster_issuer_name}",
+        "cneinstance_ibm_trusted_profile_id": "flo-trusted-profile",
+        "cneinstance_network_attachments": [],
+        "cneinstance_gateway_api": "${cneinstance_gateway_api}",
+        "cneinstance_whole_cluster": "${cneinstance_whole_cluster}",
+        "cneinstance_logging_subsystem": "${cneinstance_logging_subsystem}",
+        "cneinstance_metric_subsystem": "${cneinstance_metric_subsystem}",
+        "cneinstance_deployment_size": "${cneinstance_deployment_size}",
+        "far_repo_url": "${far_repo_url}",
+        "cneinstance_dynamic_routing": "${cneinstance_dynamic_routing}",
+        "cneinstance_firewall_acl": "${cneinstance_firewall_acl}",
+        "cneinstance_pseudocni": "${cneinstance_pseudocni}",
+        "cneinstance_env_discovery": "${cneinstance_env_discovery}",
+        "cneinstance_cloud_env": "${cneinstance_cloud_env}",
+        "cneinstance_cloud_provider": "${cneinstance_cloud_provider}",
+        "cneinstance_vpc_name": "${cluster_vpc_name}",
+        "cneinstance_cloud_region": "${cneinstance_cloud_region}",
+        "cneinstance_gslb_datacenter_name": "${cneinstance_gslb_datacenter_name}"
+      }
+    },
+    {
+      "id": "license",
+      "module": "modules/license",
+      "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+      "depends_on": [
+        "cneinstance"
+      ],
+      "inputs": {
+        "enabled": true,
+        "utils_namespace": "${utils_namespace}",
+        "jwt_token": "${jwt_token}",
+        "license_mode": "${license_mode}"
+      }
+    }
+  ]
+}

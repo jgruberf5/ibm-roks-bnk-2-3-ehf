@@ -1,15 +1,15 @@
 # BIG-IP Next ROKS Single NIC Blueprint
 
-This folder contains a portable blueprint manifest for BNK Forge.
+This folder contains a BNK Blueprint Catalog manifest using the canonical filename expected by Forge:
 
-The blueprint expresses the upstream sequence as BNK dependencies:
+- `forge-blueprint.json`
 
-- `ibm/roks/cluster`
-- `ibm/roks/cert-manager`
-- `ibm/roks/flo`
-- `ibm/roks/cneinstance`
-- `ibm/roks/license`
+The blueprint references the five catalog modules in sequence:
 
-Use this as the content artifact to import into the BNK Blueprint Catalog.
+- `modules/cluster`
+- `modules/cert-manager`
+- `modules/flo`
+- `modules/cneinstance`
+- `modules/license`
 
-The exact import endpoint or source ingestion flow depends on the BNK Forge instance version. If your instance expects a slightly different blueprint schema wrapper, keep the module identities and dependency graph the same and adapt only the outer JSON shape.
+Add this repo to the Blueprint Catalog, not just the Module Catalog, if you want Forge to discover this blueprint artifact.
