@@ -12,6 +12,53 @@
     ],
     "required_capabilities": []
   },
+  "category": "infrastructure",
+  "cloud_provider": "ibm",
+  "icon": "Server",
+  "color": "blue",
+  "estimated_time": "45-90 minutes",
+  "estimated_cost": "IBM Cloud usage-based",
+  "difficulty": "advanced",
+  "maturity": "reference",
+  "tags": [
+    "ibm",
+    "roks",
+    "openshift",
+    "f5",
+    "bigip-next",
+    "infrastructure"
+  ],
+  "outcomes": [
+    "IBM ROKS foundation resources are created or attached",
+    "cert-manager is installed before platform services",
+    "FLO and BIG-IP Next runtime resources are deployed in dependency order",
+    "Licensing prerequisites are staged for post-platform activation"
+  ],
+  "prerequisites": [
+    {
+      "type": "requirement",
+      "description": "All referenced module paths from this repository must already exist in the active Forge module catalog."
+    },
+    {
+      "type": "credential_template",
+      "name": "ibmcloud_api_key",
+      "description": "Provide an IBM credential template or project secret that can supply the IBM Cloud API key."
+    },
+    {
+      "type": "requirement",
+      "description": "Have IBM Cloud region, resource group, VPC naming, and BIG-IP integration values ready before deployment."
+    }
+  ],
+  "input_summary": [
+    {
+      "label": "Input guidance",
+      "value": "Start with IBM Cloud account, region, and resource group values, then add BIG-IP, JWT, and IBM COS inputs only if those platform features are enabled."
+    },
+    {
+      "label": "Execution model",
+      "value": "Forge deploys the modules in order: cluster, cert-manager, FLO, CNEInstance, then license."
+    }
+  ],
   "inputs": {
     "required": [
       {
@@ -372,6 +419,8 @@
   "modules": [
     {
       "id": "cluster",
+      "name": "Cluster Foundation",
+      "description": "Provision or attach the IBM ROKS cluster and supporting IBM infrastructure.",
       "module": "modules/cluster",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "depends_on": [],
@@ -400,6 +449,8 @@
     },
     {
       "id": "cert-manager",
+      "name": "cert-manager",
+      "description": "Install cert-manager and wait for its CRDs before BNK platform modules run.",
       "module": "modules/cert-manager",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "depends_on": [
@@ -417,6 +468,8 @@
     },
     {
       "id": "flo",
+      "name": "F5 Lifecycle Operator",
+      "description": "Deploy FLO and IBM-integrated platform prerequisites for BIG-IP Next.",
       "module": "modules/flo",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "depends_on": [
@@ -456,6 +509,8 @@
     },
     {
       "id": "cneinstance",
+      "name": "CNEInstance",
+      "description": "Create the BIG-IP Next runtime custom resource after FLO is available.",
       "module": "modules/cneinstance",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "depends_on": [
@@ -488,6 +543,8 @@
     },
     {
       "id": "license",
+      "name": "License",
+      "description": "Apply BIG-IP Next licensing resources after the runtime layer is ready.",
       "module": "modules/license",
       "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
       "depends_on": [

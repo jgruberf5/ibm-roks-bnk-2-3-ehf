@@ -1,78 +1,100 @@
 # IBM ROKS BNK Forge Content for BNK 2.3 EHF build 2598.3-0.0.17
 
-BNK Flow content repo for the upstream F5 DevCentral Terraform project:
+Forge-ready content derived from the upstream F5 DevCentral Terraform project:
 
 - Upstream repo: `f5devcentral/ibmcloud_schematics_bigip_next_for_kubernetes_roks_2_3_single_nic`
 - Upstream ref: `2.3.0-ehf-2-3.2598.3-0.0.17`
 
-This repo converts the upstream root-module-plus-`-target` workflow into BNK-native content:
+This repository packages that workflow into Forge-friendly artifacts:
 
-- five deployable OpenTofu modules
-- one dependency-ordered blueprint
-- IBM Cloud as the target provider
+- five reusable OpenTofu deployment-pack modules
+- one imported-blueprint manifest with ordered module orchestration
+- IBM Cloud / ROKS metadata aligned for module sync and blueprint catalog import
 
-## Why this repo exists
+## Repository Model
 
-The upstream repo expects operators to run these targeted steps in order:
+The Forge guidance recommends separate repositories for modules and blueprints, but it also allows a combined repository when module paths and blueprint references stay stable.
 
-1. `module.cluster`
-2. `module.cert_manager`
-3. `module.flo`
-4. `module.cneinstance`
-5. `module.license`
+This repository intentionally keeps both content types together:
 
-BNK Flow works better when each step is a first-class module with its own:
-
-- metadata
-- inputs and outputs
-- state
-- dependency edges
-
-This repo keeps the upstream module content as the source of truth and provides thin wrapper modules that BNK Forge can catalog and orchestrate cleanly.
+- `modules/` contains reusable deployment packs
+- `blueprints/` contains the governed solution definition that references those module paths
 
 ## Layout
 
 ```text
-ibm-roks-bnk-flow/
+ibm-roks-bnk-2-3-ehf/
   modules/
     cluster/
+      bnkforge.pack.json
+      README.md
+      tofu/
+        main.tf
+        variables.tf
+        outputs.tf
     cert-manager/
+      bnkforge.pack.json
+      README.md
+      tofu/
+        main.tf
+        variables.tf
+        outputs.tf
     flo/
+      bnkforge.pack.json
+      README.md
+      tofu/
+        main.tf
+        variables.tf
+        outputs.tf
     cneinstance/
+      bnkforge.pack.json
+      README.md
+      tofu/
+        main.tf
+        variables.tf
+        outputs.tf
     license/
+      bnkforge.pack.json
+      README.md
+      tofu/
+        main.tf
+        variables.tf
+        outputs.tf
   blueprints/
     bigip-next-roks-single-nic/
+      forge-blueprint.json
+      README.md
 ```
 
-## Module order
+## Module Order
 
-The blueprint declares this dependency chain:
+The blueprint preserves the upstream execution sequence:
 
 ```text
 cluster -> cert-manager -> flo -> cneinstance -> license
 ```
 
-That gives the same practical execution order as the upstream `terraform apply -target=...` workflow, but in BNK-native form.
+That keeps the same practical layering as the original targeted Terraform workflow while making each step discoverable and deployable in Forge.
 
-## Import into BNK Forge
+## Import into Forge
 
-1. Put this repo in GitHub.
-2. Add the repo as an approved module source in BNK Forge.
-3. Sync the module source so BNK discovers each `bnkforge.pack.json`.
-4. Add the same repo or a separate blueprint repo as a Blueprint Catalog source.
-5. Import `blueprints/bigip-next-roks-single-nic/blueprint.json` as a governed blueprint release.
-6. Create an IBM Cloud project in BNK Forge.
-7. Assign an IBM credential template with a valid `ibmcloud_api_key`.
-8. Deploy the blueprint to the project.
+1. Publish this repository to GitHub.
+2. Add it as a Module Source in Forge and sync it so each `bnkforge.pack.json` is discovered.
+3. Add the same repository as a Blueprint Source, or split the blueprint into its own repository later if desired.
+4. Import `blueprints/bigip-next-roks-single-nic/forge-blueprint.json` as a governed blueprint release.
+5. Create an IBM Cloud project in Forge.
+6. Assign an IBM credential template with a valid `ibmcloud_api_key`.
+7. Deploy the imported blueprint.
 
-## Project settings in BNK Forge
+## Project Settings in Forge
 
-Recommended BNK project settings:
+Recommended settings for first validation:
 
 - `cloud_provider = "ibm"`
-- `backend_type = "local"` for first validation
+- `project_type = "cloud-ibm"`
+- `backend_type = "local"`
 
-Optional production-style state backend:
+Optional production-style remote state:
 
 - `backend_type = "s3"`
 - `state_storage_provider = "ibm"`
@@ -80,21 +102,21 @@ Optional production-style state backend:
 - `s3_state_region = "..."`
 - `s3_endpoint = "https://s3.<region>.cloud-object-storage.appdomain.cloud"`
 
-## Important design notes
+## Design Notes
 
-- `cluster` is a direct wrapper around the upstream `modules/cluster` child module.
-- `cert-manager`, `flo`, `cneinstance`, and `license` are also direct wrappers around the upstream child modules.
-- The upstream root module had provider glue for IBM Cloud cluster auth. In BNK Forge, later modules rely on BNK provider injection for IBM/Kubernetes/Helm instead of a shared root `providers.tf`.
-- A few inputs that were formerly root-level glue are carried explicitly between modules through outputs and blueprint variable mappings.
+- Each module is a thin wrapper around the corresponding upstream child module.
+- OpenTofu source files live under `tofu/` to match the recommended deployment-pack layout.
+- The blueprint is tagged and categorized for the Infrastructure lane with IBM as the cloud provider.
+- Module paths are intentionally stable and match the blueprint references exactly.
 
-## Variables you still need to set per environment
+## Environment-Specific Inputs
 
-At minimum, expect to provide values for:
+At minimum, expect to set values for:
 
 - `ibmcloud_api_key`
 - `ibmcloud_cluster_region`
 - `ibmcloud_resource_group`
-- `openshift_cluster_name` or `cluster_id_existing`
-- FAR / JWT / BIG-IP related values when `deploy_bnk`-equivalent behavior is desired
+- cluster naming and VPC choices
+- BIG-IP, FAR, JWT, and COS values required by FLO, CNEInstance, and licensing flows
 
-See each module's `variables.tf` and `bnkforge.pack.json` for the exact contract.
+Use the module manifests, module READMEs, and `examples/project.auto.tfvars.example` as the concrete input contract.

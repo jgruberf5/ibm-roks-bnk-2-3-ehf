@@ -7,15 +7,15 @@
     "category": "bnk",
     "description": "Deploy the BIG-IP Next CNEInstance custom resource after FLO is ready.",
     "provider": "ibm",
-    "supported_platforms": ["ibm"],
+    "supported_platforms": ["ibm_roks"],
     "tags": ["ibm", "roks", "bnk", "cneinstance", "f5"]
   },
   "deployment_pack": {
     "engine": "opentofu",
     "runner_profile": "opentofu-default",
     "working_directory": ".",
-    "entrypoints": {
-      "module_root": "."
+      "entrypoints": {
+      "module_root": "tofu"
     },
     "lifecycle": {
       "supports_init": true,

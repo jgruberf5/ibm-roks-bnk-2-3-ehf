@@ -7,15 +7,15 @@
     "category": "infra",
     "description": "Provision or attach IBM ROKS cluster infrastructure for BIG-IP Next deployment.",
     "provider": "ibm",
-    "supported_platforms": ["ibm"],
+    "supported_platforms": ["ibm_roks"],
     "tags": ["ibm", "roks", "openshift", "bigip-next"]
   },
   "deployment_pack": {
     "engine": "opentofu",
     "runner_profile": "opentofu-default",
     "working_directory": ".",
-    "entrypoints": {
-      "module_root": "."
+      "entrypoints": {
+      "module_root": "tofu"
     },
     "lifecycle": {
       "supports_init": true,
