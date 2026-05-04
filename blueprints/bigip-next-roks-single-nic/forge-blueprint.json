@@ -2,7 +2,7 @@
   "schema_version": 1,
   "blueprint": {
     "id": "ibm-roks-bnk-2-3-ehf.single-nic",
-    "version": "2.3.0-ehf-2-3.2598.3-0.0.17",
+    "version": "2.3.0-ehf-2-3.2598.3-0.0.18",
     "name": "BIG-IP Next for Kubernetes on IBM ROKS Single NIC",
     "description": "Composable IBM ROKS BNK deployment that sequences cluster, cert-manager, FLO, CNEInstance, and license modules."
   },
